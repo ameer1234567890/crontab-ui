@@ -15,15 +15,14 @@
 		<label class="form-label" for="job-command">Command</label>
 		<textarea class='form-control form-control-sm' id='job-command' rows='2' oninput="job_command = $(this).val(); job_string();"></textarea>
 	</div>
-	<div class="mb-2">
-		<label class="form-label">Quick Schedule</label>
-		<div class="d-flex flex-wrap gap-1">
-			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '* * * * *'; job_string();">Every Minute</a>
-			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '*/5 * * * *'; job_string();">Every 5 Min</a>
-			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '@hourly'; job_string();">Hourly</a>
-			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '@daily'; job_string();">Daily</a>
-			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '@weekly'; job_string();">Weekly</a>
-			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '@monthly'; job_string();">Monthly</a>
+	<label class="form-label">Quick Schedule</label>
+	<div class="row g-2 mb-1">
+		<div class="col"><a class="btn btn-outline-primary btn-sm w-100" onclick="schedule = '* * * * *'; job_string();">Every Minute</a></div>
+		<div class="col"><a class="btn btn-outline-primary btn-sm w-100" onclick="schedule = '@hourly'; job_string();">Hourly</a></div>
+		<div class="col"><a class="btn btn-outline-primary btn-sm w-100" onclick="schedule = '@daily'; job_string();">Daily</a></div>
+		<div class="col"><a class="btn btn-outline-primary btn-sm w-100" onclick="schedule = '@monthly'; job_string();">Monthly</a></div>
+		<div class="col"><a class="btn btn-outline-primary btn-sm w-100" onclick="schedule = '@weekly'; job_string();">Weekly</a></div>
+		<div class="col-auto d-flex gap-1">
 			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '@yearly'; job_string();">Yearly</a>
 			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '@reboot'; job_string();">Startup</a>
 		</div>
