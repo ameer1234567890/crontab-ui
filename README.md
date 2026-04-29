@@ -22,6 +22,7 @@ This fork includes a visual refresh of the UI:
 - **Compact, icon-only row actions** with hover tooltips — Run now, Edit, enable/disable toggle, Duplicate, Delete. Distinct toggle icons (green pill = running, gray pill = stopped) replace the previous duplicated play icons.
 - **Tighter table** — narrower `#` and `Last Modified` columns, monospace command text, hover row tint, uppercase header labels.
 - **Compact edit modal** — fits on one screen without scrolling; smaller form controls, inline cron-field labels, scrollable body so Save/Cancel stay visible.
+- **Quick Schedule presets that fill the cron fields** — the seven preset buttons (Minutely, Hourly, Daily, Monthly, Weekly, Yearly, Startup) sit on a single uniform-height row and now populate the Minute/Hour/Day/Month/Week inputs in addition to setting the schedule string, so you can pick a preset and fine-tune from there.
 - **Refined navbar** — brand left-aligned with the page content; `Backups` dropdown and a GitHub icon right-aligned.
 
 ---
