@@ -31,26 +31,26 @@
 <div class="app-container">
 	<div class="page-header">
 		<h2>Cronjobs</h2>
+		<div class="btn-group btn-group-sm" role="group">
+			<a class="btn btn-outline-secondary" onclick="doBackup();"><i class="bi bi-download"></i> Backup</a>
+			<a class="btn btn-outline-secondary" onclick="import_db()"><i class="bi bi-box-arrow-in-down"></i> Import</a>
+			<a class="btn btn-outline-secondary" href="<%= JSON.parse(routes).export %>"><i class="bi bi-box-arrow-up"></i> Export</a>
+		</div>
 	</div>
 	<div class="app-card">
 		<label for="env_vars" class="form-label">Environment Variables</label>
 		<textarea class="form-control" rows="3" id="env_vars" placeholder="# Please set PATH, MAILTO, HOME... here"></textarea>
 	</div>
 	<div class="app-card">
-		<div class="toolbar">
-			<div class="btn-group" role="group">
-				<a class="btn btn-primary" onclick="newJob();"><i class="bi bi-plus-circle"></i> New</a>
-				<a class="btn btn-info" onclick="doBackup();"><i class="bi bi-download"></i> Backup</a>
-				<form id="import_form" enctype="multipart/form-data" action="<%= JSON.parse(routes).import %>" method="post" style="display:none">
-					<input type="file" id="import_file" name="import_file" onchange="$('#import_form').submit()"/>
-				</form>
-				<a class="btn btn-warning" onclick="import_db()"><i class="bi bi-box-arrow-in-down"></i> Import</a>
-				<a class="btn btn-warning" href="<%= JSON.parse(routes).export %>"><i class="bi bi-box-arrow-up"></i> Export</a>
-			</div>
-			<div class="btn-group" role="group">
-				<a class="btn btn-success" onclick="getCrontab();"><i class="bi bi-arrow-down-circle"></i> Get from crontab</a>
+		<div class="toolbar d-flex flex-wrap align-items-center gap-2">
+			<form id="import_form" enctype="multipart/form-data" action="<%= JSON.parse(routes).import %>" method="post" style="display:none">
+				<input type="file" id="import_file" name="import_file" onchange="$('#import_form').submit()"/>
+			</form>
+			<a class="btn btn-sm btn-primary" onclick="newJob();"><i class="bi bi-plus-circle"></i> New Job</a>
+			<div class="btn-group btn-group-sm ms-auto" role="group">
+				<a class="btn btn-outline-success" onclick="getCrontab();"><i class="bi bi-arrow-down-circle"></i> Get from crontab</a>
+				<a class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Preview crontab" onclick="previewCrontab();"><i class="bi bi-eye"></i></a>
 				<a class="btn btn-success" onclick="setCrontab();"><i class="bi bi-save"></i> Save to crontab</a>
-				<a class="btn btn-outline-secondary" onclick="previewCrontab();"><i class="bi bi-code-square"></i> Preview crontab</a>
 			</div>
 		</div>
 	</div>
@@ -63,7 +63,7 @@
 		<th>Name</th>
 		<th>Job</th>
 		<th>Time</th>
-		<th>Last Modified</th>
+		<th class="col-modified">Last Modified</th>
 		<th class="col-actions">Actions</th>
 	</tr>
 </thead>
@@ -104,22 +104,22 @@
 						<i class="bi bi-info-circle"></i>
 					</a>
 				</td>
-				<td style="width:20%" title="<%= crontab.timestamp %>"><%= dayjs(new Date(crontab.timestamp)).fromNow() %></td>
+				<td class="col-modified" title="<%= crontab.timestamp %>"><%= dayjs(new Date(crontab.timestamp)).fromNow() %></td>
 				<td class="nowrap-actions">
 
 		<% if (!crontab.stopped) { %>
 			<% if (crontab.logging && crontab.logging != "false") {%>
-					<a class="btn btn-sm btn-danger" data-bs-toggle="tooltip" data-bs-placement="left" title="stderr" href="<%= JSON.parse(routes).logger + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-text"></i></a>
-					<a class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" title="stdout" href="<%= JSON.parse(routes).stdout + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-text"></i></a>
+					<a class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="stderr log" href="<%= JSON.parse(routes).logger + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-x"></i></a>
+					<a class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="stdout log" href="<%= JSON.parse(routes).stdout + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-text"></i></a>
 			<% } %>
-					<a class="btn btn-sm btn-info" onclick="runJob('<%= crontab._id %>')"><i class="bi bi-play-fill"></i> Run now</a>
-					<a class="btn btn-sm btn-primary" onclick="editJob('<%= crontab._id %>')"><i class="bi bi-pencil-square"></i> Edit</a>
-					<a class="btn btn-sm btn-secondary" onclick="stopJob('<%= crontab._id %>')"><i class="bi bi-stop-fill"></i> Disable</a>
+					<a class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Run now" onclick="runJob('<%= crontab._id %>')"><i class="bi bi-play-fill"></i></a>
+					<a class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" onclick="editJob('<%= crontab._id %>')"><i class="bi bi-pencil-square"></i></a>
+					<a class="btn btn-sm btn-link toggle-btn toggle-on" data-bs-toggle="tooltip" data-bs-placement="top" title="Disable" onclick="stopJob('<%= crontab._id %>')"><i class="bi bi-toggle-on"></i></a>
 		<% } else { %>
-					<a class="btn btn-sm btn-info" onclick="startJob('<%= crontab._id %>')"><i class="bi bi-play-fill"></i> Enable</a>
+					<a class="btn btn-sm btn-link toggle-btn toggle-off" data-bs-toggle="tooltip" data-bs-placement="top" title="Enable" onclick="startJob('<%= crontab._id %>')"><i class="bi bi-toggle-off"></i></a>
 		<% } %>
-					<a class="btn btn-sm btn-warning" onclick="duplicateJob('<%= crontab._id %>')"><i class="bi bi-copy"></i></a>
-					<a class="btn btn-sm btn-danger" onclick="deleteJob('<%= crontab._id %>')"><i class="bi bi-trash"></i></a>
+					<a class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Duplicate" onclick="duplicateJob('<%= crontab._id %>')"><i class="bi bi-copy"></i></a>
+					<a class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" onclick="deleteJob('<%= crontab._id %>')"><i class="bi bi-trash"></i></a>
 				</td>
 			</tr>
 	<% }); %>

@@ -1,6 +1,7 @@
 body {
   background-color: #f5f6f8;
   color: #1f2330;
+  font-size: 0.9rem;
 }
 
 .app-container {
@@ -13,8 +14,8 @@ body {
 
 main.app-container,
 body > .app-container {
-  padding-top: 1.75rem;
-  padding-bottom: 3rem;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
 }
 
 .navbar.bg-dark {
@@ -37,15 +38,15 @@ body > .app-container {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .page-header h2 {
   margin: 0;
   font-weight: 600;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 .app-card {
@@ -53,8 +54,8 @@ body > .app-container {
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
-  padding: 1.25rem;
-  margin-bottom: 1.25rem;
+  padding: 0.875rem 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .app-card > :last-child {
@@ -103,6 +104,65 @@ body > .app-container {
 #main_table th.col-actions,
 #main_table td.nowrap-actions {
   text-align: right;
+  width: 1%;
+}
+
+#main_table th.col-modified,
+#main_table td.col-modified {
+  width: 8rem;
+  white-space: nowrap;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+#main_table td.nowrap-actions .btn {
+  margin-right: 0.15rem;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+#main_table td.nowrap-actions .btn:last-child {
+  margin-right: 0;
+}
+
+#main_table td.nowrap-actions .btn .bi {
+  font-size: 0.95rem;
+  vertical-align: -0.125em;
+}
+
+#main_table td.nowrap-actions .toggle-btn {
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  padding: 0.2rem 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#main_table td.nowrap-actions .toggle-btn .bi {
+  font-size: 1.05rem;
+  line-height: 1;
+  margin: 0;
+}
+
+#main_table td.nowrap-actions .toggle-btn.toggle-on .bi {
+  color: #16a34a;
+}
+
+#main_table td.nowrap-actions .toggle-btn.toggle-off .bi {
+  color: #9ca3af;
+}
+
+#main_table td.nowrap-actions .toggle-btn:hover {
+  background: #f9fafb;
+}
+
+.app-card .form-label {
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
 }
 
 div.dataTables_wrapper div.dataTables_length,
@@ -118,8 +178,8 @@ div.dataTables_wrapper div.dataTables_filter label {
 
 #main_table tbody td {
   vertical-align: middle;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 #main_table tbody tr:hover td {

@@ -1,61 +1,54 @@
 <!-- Job -->
 <div class="modal fade" id="job" tabindex="-1">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header py-2">
         <h5 class="modal-title" id="job-title">Job</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" id="job-body">
-	<div class="mb-3">
+	<div class="mb-2">
 		<label class="form-label" for="job-name">Name (Optional)</label>
-		<input type='text' class='form-control' id='job-name'/>
+		<input type='text' class='form-control form-control-sm' id='job-name'/>
 	</div>
-	<div class="mb-3">
+	<div class="mb-2">
 		<label class="form-label" for="job-command">Command</label>
-		<textarea class='form-control' id='job-command' rows='3' oninput="job_command = $(this).val(); job_string();"></textarea>
+		<textarea class='form-control form-control-sm' id='job-command' rows='2' oninput="job_command = $(this).val(); job_string();"></textarea>
 	</div>
-	<div class="mb-3">
+	<div class="mb-2">
 		<label class="form-label">Quick Schedule</label>
-		<div class="d-flex flex-wrap gap-2">
-			<a class="btn btn-primary btn-sm" onclick="schedule = '* * * * *'; job_string();">Every Minute</a>
-			<a class="btn btn-primary btn-sm" onclick="schedule = '*/5 * * * *'; job_string();">Every 5 Min</a>
-			<a class="btn btn-primary btn-sm" onclick="schedule = '@hourly'; job_string();">Hourly</a>
-			<a class="btn btn-primary btn-sm" onclick="schedule = '@daily'; job_string();">Daily</a>
-			<a class="btn btn-primary btn-sm" onclick="schedule = '@weekly'; job_string();">Weekly</a>
-			<a class="btn btn-primary btn-sm" onclick="schedule = '@monthly'; job_string();">Monthly</a>
-			<a class="btn btn-primary btn-sm" onclick="schedule = '@yearly'; job_string();">Yearly</a>
-			<a class="btn btn-primary btn-sm" onclick="schedule = '@reboot'; job_string();">Startup</a>
+		<div class="d-flex flex-wrap gap-1">
+			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '* * * * *'; job_string();">Every Minute</a>
+			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '*/5 * * * *'; job_string();">Every 5 Min</a>
+			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '@hourly'; job_string();">Hourly</a>
+			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '@daily'; job_string();">Daily</a>
+			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '@weekly'; job_string();">Weekly</a>
+			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '@monthly'; job_string();">Monthly</a>
+			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '@yearly'; job_string();">Yearly</a>
+			<a class="btn btn-outline-primary btn-sm" onclick="schedule = '@reboot'; job_string();">Startup</a>
 		</div>
 	</div>
 
-	<div class="row cron-fields-row">
-		<div class="col-md-2"><label class="form-label">Minute</label></div>
-		<div class="col-md-2"><label class="form-label">Hour</label></div>
-		<div class="col-md-2"><label class="form-label">Day</label></div>
-		<div class="col-md-2"><label class="form-label">Month</label></div>
-		<div class="col-md-2"><label class="form-label">Week</label></div>
-	</div>
-	<div class="row cron-fields-row">
-		<div class="col-md-2"><input type="text" class="form-control" id="job-minute" value="*" onclick="this.select();"/></div>
-		<div class="col-md-2"><input type="text" class="form-control" id="job-hour" value="*" onclick="this.select();"/></div>
-		<div class="col-md-2"><input type="text" class="form-control" id="job-day" value="*" onclick="this.select();"/></div>
-		<div class="col-md-2"><input type="text" class="form-control" id="job-month" value="*" onclick="this.select();"/></div>
-		<div class="col-md-2"><input type="text" class="form-control" id="job-week" value="*" onclick="this.select();"/></div>
-		<div class="col-md-2"><a class="btn btn-primary btn-sm" onclick="set_schedule();">Set</a></div>
+	<div class="row g-2 align-items-end mb-2">
+		<div class="col"><label class="form-label small mb-1">Minute</label><input type="text" class="form-control form-control-sm" id="job-minute" value="*" onclick="this.select();"/></div>
+		<div class="col"><label class="form-label small mb-1">Hour</label><input type="text" class="form-control form-control-sm" id="job-hour" value="*" onclick="this.select();"/></div>
+		<div class="col"><label class="form-label small mb-1">Day</label><input type="text" class="form-control form-control-sm" id="job-day" value="*" onclick="this.select();"/></div>
+		<div class="col"><label class="form-label small mb-1">Month</label><input type="text" class="form-control form-control-sm" id="job-month" value="*" onclick="this.select();"/></div>
+		<div class="col"><label class="form-label small mb-1">Week</label><input type="text" class="form-control form-control-sm" id="job-week" value="*" onclick="this.select();"/></div>
+		<div class="col-auto"><a class="btn btn-primary btn-sm" onclick="set_schedule();">Set</a></div>
 	</div>
 
-	<div class="mb-3">
+	<div class="mb-2">
 		<label class="form-label" for="job-string">Job</label>
-		<input type='text' class='form-control' id='job-string' disabled='disabled'/>
+		<input type='text' class='form-control form-control-sm' id='job-string' disabled='disabled'/>
 	</div>
-	<div class="form-check mb-3">
-		<input type="checkbox" class="form-check-input" id="job-logging"/>
-		<label class="form-check-label" for="job-logging">Enable error logging.</label>
-	</div>
-	<div class="d-flex gap-2">
-		<a class="btn btn-primary btn-sm" data-json="{}" onclick="setMailConfig(this);" id="job-mailing">Mailing</a>
-		<a class="btn btn-primary btn-sm" data-json="{}" onclick="setHookConfig(this);">Hooks</a>
+	<div class="d-flex flex-wrap align-items-center gap-3">
+		<div class="form-check m-0">
+			<input type="checkbox" class="form-check-input" id="job-logging"/>
+			<label class="form-check-label" for="job-logging">Enable error logging</label>
+		</div>
+		<a class="btn btn-outline-secondary btn-sm" data-json="{}" onclick="setMailConfig(this);" id="job-mailing"><i class="bi bi-envelope"></i> Mailing</a>
+		<a class="btn btn-outline-secondary btn-sm" data-json="{}" onclick="setHookConfig(this);"><i class="bi bi-hdd-network"></i> Hooks</a>
 	</div>
       </div>
       <div class="modal-footer">
