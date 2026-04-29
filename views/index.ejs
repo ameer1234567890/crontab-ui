@@ -7,6 +7,7 @@
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/bootstrap-icons.min.css" rel="stylesheet">
 <link href="css/dataTables.bootstrap5.min.css" rel="stylesheet">
+<link href="css/custom.css" rel="stylesheet">
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.bundle.min.js"></script>
 <script src="js/dataTables.min.js"></script>
@@ -27,34 +28,43 @@
 </head>
 <body>
 <%- include('navbar.ejs') -%>
-<div class="container-fluid">
-	<h2>Cronjobs</h2>
-	<div class="mb-3">
-		<label for="env_vars" class="form-label">Environment Variables:</label>
+<div class="app-container">
+	<div class="page-header">
+		<h2>Cronjobs</h2>
+	</div>
+	<div class="app-card">
+		<label for="env_vars" class="form-label">Environment Variables</label>
 		<textarea class="form-control" rows="3" id="env_vars" placeholder="# Please set PATH, MAILTO, HOME... here"></textarea>
 	</div>
-	<div class="mb-3">
-		<a class="btn btn-primary" onclick="newJob();"><i class="bi bi-plus-circle"></i> New</a>
-		<a class="btn btn-info" onclick="doBackup();"><i class="bi bi-download"></i> Backup</a>
-		<form id="import_form" enctype="multipart/form-data" action="<%= JSON.parse(routes).import %>" method="post" style="display:none">
-			<input type="file" id="import_file" name="import_file" onchange="$('#import_form').submit()"/>
-		</form>
-		<a class="btn btn-warning" onclick="import_db()"><i class="bi bi-box-arrow-in-down"></i> Import</a>
-		<a class="btn btn-warning" href="<%= JSON.parse(routes).export %>"><i class="bi bi-box-arrow-up"></i> Export</a>
-		<a class="btn btn-success" onclick="getCrontab();"><i class="bi bi-arrow-down-circle"></i> Get from crontab</a>
-		<a class="btn btn-success" onclick="setCrontab();"><i class="bi bi-save"></i> Save to crontab</a>
-		<a class="btn btn-outline-secondary" onclick="previewCrontab();"><i class="bi bi-code-square"></i> Preview crontab</a>
+	<div class="app-card">
+		<div class="toolbar">
+			<div class="btn-group" role="group">
+				<a class="btn btn-primary" onclick="newJob();"><i class="bi bi-plus-circle"></i> New</a>
+				<a class="btn btn-info" onclick="doBackup();"><i class="bi bi-download"></i> Backup</a>
+				<form id="import_form" enctype="multipart/form-data" action="<%= JSON.parse(routes).import %>" method="post" style="display:none">
+					<input type="file" id="import_file" name="import_file" onchange="$('#import_form').submit()"/>
+				</form>
+				<a class="btn btn-warning" onclick="import_db()"><i class="bi bi-box-arrow-in-down"></i> Import</a>
+				<a class="btn btn-warning" href="<%= JSON.parse(routes).export %>"><i class="bi bi-box-arrow-up"></i> Export</a>
+			</div>
+			<div class="btn-group" role="group">
+				<a class="btn btn-success" onclick="getCrontab();"><i class="bi bi-arrow-down-circle"></i> Get from crontab</a>
+				<a class="btn btn-success" onclick="setCrontab();"><i class="bi bi-save"></i> Save to crontab</a>
+				<a class="btn btn-outline-secondary" onclick="previewCrontab();"><i class="bi bi-code-square"></i> Preview crontab</a>
+			</div>
+		</div>
 	</div>
 
+	<div class="app-card">
 	<table class="table table-striped" id="main_table">
 		<thead>
 	<tr>
-		<th>#</th>
+		<th class="col-num">#</th>
 		<th>Name</th>
 		<th>Job</th>
 		<th>Time</th>
 		<th>Last Modified</th>
-		<th></th>
+		<th class="col-actions">Actions</th>
 	</tr>
 </thead>
 <tbody>
@@ -65,8 +75,8 @@
 		<% } else { %>
 			<tr class="table-primary">
 		<% } %>
-				<td>
-					<%= index %>.
+				<td class="col-num">
+					<%= index %>
 					<% index += 1 %>
 				</td>
 
@@ -95,7 +105,7 @@
 					</a>
 				</td>
 				<td style="width:20%" title="<%= crontab.timestamp %>"><%= dayjs(new Date(crontab.timestamp)).fromNow() %></td>
-				<td>
+				<td class="nowrap-actions">
 
 		<% if (!crontab.stopped) { %>
 			<% if (crontab.logging && crontab.logging != "false") {%>
@@ -117,6 +127,7 @@
 
 </tbody>
 	</table>
+	</div>
 </div>
 <%- include('popup.ejs') -%>
 <script>

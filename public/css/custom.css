@@ -1,0 +1,163 @@
+body {
+  background-color: #f5f6f8;
+  color: #1f2330;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1.25rem;
+}
+
+main.app-container,
+body > .app-container {
+  padding-top: 1.75rem;
+  padding-bottom: 3rem;
+}
+
+.navbar.bg-dark {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.navbar > .app-container {
+  display: flex;
+  flex-wrap: inherit;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.page-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.page-header h2 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.app-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.app-card > :last-child {
+  margin-bottom: 0;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.toolbar .btn-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.toolbar .btn-group + .btn-group {
+  margin-left: 0.75rem;
+}
+
+#main_table {
+  margin-bottom: 0;
+}
+
+#main_table thead th {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+#main_table th.col-num,
+#main_table td.col-num {
+  width: 3rem;
+  text-align: center;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}
+
+#main_table th.col-actions,
+#main_table td.nowrap-actions {
+  text-align: right;
+}
+
+div.dataTables_wrapper div.dataTables_length,
+div.dataTables_wrapper div.dataTables_filter {
+  margin-bottom: 0.75rem;
+}
+
+div.dataTables_wrapper div.dataTables_filter label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#main_table tbody td {
+  vertical-align: middle;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+#main_table tbody tr:hover td {
+  background-color: #f9fafb;
+}
+
+#main_table td:nth-child(3) {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  color: #111827;
+  word-break: break-word;
+}
+
+.nowrap-actions {
+  white-space: nowrap;
+}
+
+.nowrap-actions .btn {
+  margin-right: 0.25rem;
+}
+
+.nowrap-actions .btn:last-child {
+  margin-right: 0;
+}
+
+.modal-body {
+  padding: 1.25rem 1.5rem;
+}
+
+.modal-body .form-label {
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+}
+
+.cron-fields-row {
+  margin-bottom: 0.75rem;
+}
+
+#preview-crontab-content {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
