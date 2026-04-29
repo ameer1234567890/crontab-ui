@@ -321,6 +321,25 @@ function set_schedule() {
   job_string();
 }
 
+function quick_schedule(s) {
+  schedule = s;
+  var fields = {
+    '* * * * *': ['*', '*', '*', '*', '*'],
+    '@hourly':   ['0', '*', '*', '*', '*'],
+    '@daily':    ['0', '0', '*', '*', '*'],
+    '@weekly':   ['0', '0', '*', '*', '0'],
+    '@monthly':  ['0', '0', '1', '*', '*'],
+    '@yearly':   ['0', '0', '1', '1', '*'],
+    '@reboot':   ['', '', '', '', '']
+  }[s] || ['*', '*', '*', '*', '*'];
+  $('#job-minute').val(fields[0]);
+  $('#job-hour').val(fields[1]);
+  $('#job-day').val(fields[2]);
+  $('#job-month').val(fields[3]);
+  $('#job-week').val(fields[4]);
+  job_string();
+}
+
 function previewCrontab() {
   $.get(routes.preview_crontab, function(data) {
     document.getElementById('preview-crontab-content').textContent = data || '# (empty crontab)';
