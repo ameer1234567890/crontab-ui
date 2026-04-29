@@ -38,7 +38,10 @@
 		</div>
 	</div>
 	<div class="app-card">
-		<label for="env_vars" class="form-label">Environment Variables</label>
+		<label for="env_vars" class="form-label">
+			Environment Variables
+			<a tabindex="0" role="button" class="text-muted ms-1" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="Variables prepended to the deployed crontab and to <em>Run now</em> commands. Use for <code>PATH</code>, <code>MAILTO</code>, <code>HOME</code>, <code>SHELL</code> &mdash; they apply to every job."><i class="bi bi-info-circle"></i></a>
+		</label>
 		<textarea class="form-control" rows="3" id="env_vars" placeholder="# Please set PATH, MAILTO, HOME... here"></textarea>
 	</div>
 	<div class="app-card">
@@ -134,6 +137,8 @@
    document.addEventListener('DOMContentLoaded', function() {
    	$('#main_table').DataTable({
    		order: [[1, 'asc']],
+   		pageLength: 50,
+   		lengthMenu: [10, 25, 50, 100],
    		columns: [
    			{orderable: false},
    			null,
