@@ -12,6 +12,8 @@ Crontab UI
 
 ![Crontab UI](screenshots/ui-overview.png)
 
+![Job edit modal](screenshots/ui-edit-modal.png)
+
 This fork includes a visual refresh of the UI:
 
 - **Constrained layout** — content is now centered with a max-width of 1280px so rows stay readable on wide monitors.
