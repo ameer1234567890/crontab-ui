@@ -2,3 +2,8 @@
 node_modules
 crontabs/*.db
 crontabs/logs/*.log
+dist/
+build/icon.icns
+build/icon.png
+build/icon-*.png
+build/icon.iconset/

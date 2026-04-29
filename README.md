@@ -8,6 +8,33 @@ Crontab UI
 [![npm](https://img.shields.io/docker/pulls/alseambusher/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/l/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 
+## Update — 2026-04-29: macOS desktop app
+
+A native macOS `.app` is now available so you don't have to keep `node app.js` running in a terminal. Launching it spawns the Express server on a free local port in the background, opens the UI in its own window, and tears the server down again when you quit the window.
+
+![Crontab UI desktop app](screenshots/desktop-app.png)
+
+**Install (Apple Silicon):** download `Crontab-UI-0.4.2-arm64.dmg` from the [Releases page](https://github.com/kanihal/crontab-ui/releases), open the DMG, drag **Crontab UI** to `/Applications`. On first launch macOS may complain because the build is unsigned; clear quarantine once with:
+
+```sh
+xattr -dr com.apple.quarantine "/Applications/Crontab UI.app"
+```
+
+Then launch from Spotlight or the Applications folder. Cron data lives at `~/Library/Application Support/crontab-ui/crontabs/`.
+
+**Build it yourself:**
+
+```sh
+npm install
+npm run icon       # generates build/icon.icns
+npm run electron   # dev mode (no packaging)
+npm run dist:mac   # builds dist/Crontab UI-<ver>-arm64.dmg
+```
+
+The Electron wrapper lives in [`electron-main.js`](electron-main.js); the icon pipeline is in [`scripts/`](scripts/).
+
+---
+
 ## Recent UI improvements
 
 ![Crontab UI](screenshots/ui-overview.png)
