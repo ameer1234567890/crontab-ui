@@ -80,26 +80,57 @@ function runJob(_id) {
   });
 }
 
-function setCrontab() {
-  messageBox('<p> Do you want to set the crontab file? </p>', 'Confirm crontab setup', null, null, function() {
-    $.get(routes.crontab, { 'env_vars': $('#env_vars').val() }, function() {
-      infoMessageBox('Successfully set crontab file!', 'Information');
-      location.reload();
-    }).fail(function(response) {
-      errorMessageBox(response.statusText);
-    });
+function refreshCrontab() {
+  $.get(routes.import_crontab, function() {
+    location.reload();
+  }).fail(function(response) {
+    errorMessageBox(response.statusText);
   });
 }
 
-function getCrontab() {
-  messageBox(
-    '<p> Do you want to get the crontab file? <br /> A backup will be created automatically before importing.</p>',
-    'Confirm crontab retrieval', null, null, function() {
-      $.get(routes.import_crontab, { 'env_vars': $('#env_vars').val() }, function() {
-        infoMessageBox('Successfully got the crontab file!', 'Information');
-        location.reload();
-      });
-    });
+function testRunJob() {
+  var command = collapsedCommand();
+  var envVars = $('#job-env-vars').val();
+  if (!command || !command.trim()) {
+    errorMessageBox('Enter a command before running');
+    return;
+  }
+  var btn = document.getElementById('job-test-run');
+  var wrap = document.getElementById('job-test-result-wrap');
+  var pre = document.getElementById('job-test-result');
+  var status = document.getElementById('job-test-status');
+  btn.setAttribute('disabled', 'disabled');
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Running...';
+  wrap.style.display = 'block';
+  status.textContent = '';
+  pre.textContent = '(running)';
+  $.post(routes.test_run, { command: command, envVars: envVars || '' }, function(result) {
+    var parts = [];
+    if (result.stdout) parts.push('--- stdout ---\n' + result.stdout);
+    if (result.stderr) parts.push('--- stderr ---\n' + result.stderr);
+    if (!parts.length) parts.push('(no output)');
+    pre.textContent = parts.join('\n\n');
+    var label = result.timedOut ? 'timed out' : ('exit code ' + result.exitCode);
+    status.textContent = '(' + label + ')';
+  }).fail(function(xhr) {
+    pre.textContent = (xhr.responseJSON && xhr.responseJSON.message) || xhr.statusText || 'request failed';
+    status.textContent = '(error)';
+  }).always(function() {
+    btn.removeAttribute('disabled');
+    btn.innerHTML = '<i class="bi bi-play-circle"></i> Test Run';
+  });
+}
+
+function handleSaveFailure(xhr) {
+  if (xhr.status === 409) {
+    infoMessageBox(
+      'This job was modified elsewhere. Reloading to show the latest version.',
+      'Conflict'
+    );
+    setTimeout(function() { location.reload(); }, 1500);
+    return;
+  }
+  errorMessageBox(xhr.statusText || 'request failed');
 }
 
 function editJob(_id) {
@@ -108,10 +139,13 @@ function editJob(_id) {
     if (crontab._id == _id) job = crontab;
   });
 
+  resetTestResult();
   if (job) {
     getModal('job').show();
     $('#job-name').val(job.name);
     $('#job-command').val(job.command);
+    $('#job-env-vars').val(job.envVars || '');
+    $('#job-version').val(job.version != null ? job.version : '');
     if (job.schedule.indexOf('@') !== 0) {
       var components = job.schedule.split(' ');
       $('#job-minute').val(components[0]);
@@ -138,9 +172,11 @@ function editJob(_id) {
     var name = $('#job-name').val();
     var mailing = JSON.parse($('#job-mailing').attr('data-json'));
     var logging = $('#job-logging').prop('checked');
-    $.post(routes.save, {name: name, command: collapsedCommand(), schedule: schedule, _id: _id, logging: logging, mailing: mailing}, function() {
+    var version = $('#job-version').val();
+    var envVars = $('#job-env-vars').val();
+    $.post(routes.save, {name: name, command: collapsedCommand(), schedule: schedule, _id: _id, logging: logging, mailing: mailing, version: version, envVars: envVars}, function() {
       location.reload();
-    });
+    }).fail(handleSaveFailure);
     getModal('job').hide();
   });
 }
@@ -154,9 +190,12 @@ function newJob() {
   $('#job-month').val('*');
   $('#job-week').val('*');
 
+  resetTestResult();
   getModal('job').show();
   $('#job-name').val('');
   $('#job-command').val('');
+  $('#job-env-vars').val('');
+  $('#job-version').val('');
   $('#job-mailing').attr('data-json', '{}');
   $('#job-logging').prop('checked', false);
   job_string();
@@ -169,9 +208,10 @@ function newJob() {
     var name = $('#job-name').val();
     var mailing = JSON.parse($('#job-mailing').attr('data-json'));
     var logging = $('#job-logging').prop('checked');
-    $.post(routes.save, {name: name, command: collapsedCommand(), schedule: schedule, _id: -1, logging: logging, mailing: mailing}, function() {
+    var envVars = $('#job-env-vars').val();
+    $.post(routes.save, {name: name, command: collapsedCommand(), schedule: schedule, _id: -1, logging: logging, mailing: mailing, envVars: envVars}, function() {
       location.reload();
-    });
+    }).fail(handleSaveFailure);
     getModal('job').hide();
   });
 }
@@ -193,10 +233,20 @@ function duplicateJob(_id) {
     schedule: job.schedule,
     _id: -1,
     logging: logging,
-    mailing: mailing
+    mailing: mailing,
+    envVars: job.envVars || ''
   }, function() {
     location.reload();
   });
+}
+
+function resetTestResult() {
+  var wrap = document.getElementById('job-test-result-wrap');
+  if (wrap) wrap.style.display = 'none';
+  var pre = document.getElementById('job-test-result');
+  if (pre) pre.textContent = '';
+  var status = document.getElementById('job-test-status');
+  if (status) status.textContent = '';
 }
 
 function doBackup() {

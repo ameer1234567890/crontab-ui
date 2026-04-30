@@ -22,7 +22,6 @@
 		tooltipTriggerList.map(function (el) { return new bootstrap.Tooltip(el); });
 		crontabs = JSON.parse('<%- crontabs.replace(/\\\\/g, "\\\\\\\\").replace(/\\\"/g,"\\\\\"").replace(/\'/g,"\\\'").replace(/\\t/g, " ") %>');
 		routes = JSON.parse('<%- routes %>');
-		$("#env_vars").val(`<%- env  %>`);
 	});
 </script>
 </head>
@@ -38,22 +37,14 @@
 		</div>
 	</div>
 	<div class="app-card">
-		<label for="env_vars" class="form-label">
-			Environment Variables
-			<a tabindex="0" role="button" class="text-muted ms-1" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-html="true" title="Variables prepended to the deployed crontab and to <em>Run now</em> commands. Use for <code>PATH</code>, <code>MAILTO</code>, <code>HOME</code>, <code>SHELL</code> &mdash; they apply to every job."><i class="bi bi-info-circle"></i></a>
-		</label>
-		<textarea class="form-control" rows="3" id="env_vars" placeholder="# Please set PATH, MAILTO, HOME... here"></textarea>
-	</div>
-	<div class="app-card">
 		<div class="toolbar d-flex flex-wrap align-items-center gap-2">
 			<form id="import_form" enctype="multipart/form-data" action="<%= JSON.parse(routes).import %>" method="post" style="display:none">
 				<input type="file" id="import_file" name="import_file" onchange="$('#import_form').submit()"/>
 			</form>
 			<a class="btn btn-sm btn-primary" onclick="newJob();"><i class="bi bi-plus-circle"></i> New Job</a>
 			<div class="btn-group btn-group-sm ms-auto" role="group">
-				<a class="btn btn-outline-success" onclick="getCrontab();"><i class="bi bi-arrow-down-circle"></i> Get from crontab</a>
+				<a class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Refresh from system crontab" onclick="refreshCrontab();"><i class="bi bi-arrow-clockwise"></i></a>
 				<a class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Preview crontab" onclick="previewCrontab();"><i class="bi bi-eye"></i></a>
-				<a class="btn btn-success" onclick="setCrontab();"><i class="bi bi-save"></i> Save to crontab</a>
 			</div>
 		</div>
 	</div>
@@ -87,13 +78,6 @@
 					<% if (crontab.name) { %>
 						<%= crontab.name %>
 						<a class="btn btn-sm" data-bs-toggle="tooltip" data-bs-placement="right" title="<%= crontab._id %>"><i class="bi bi-info-circle"></i></a>
-						<% if (crontab.saved) { %>
-							<i class="bi bi-check-circle text-success"></i>
-						<% } else { %>
-							<a data-bs-toggle="tooltip" data-bs-placement="right" title="'Save to crontab' to deploy">
-								<i class="bi bi-exclamation-circle text-warning"></i>
-							</a>
-						<% } %>
 					<% } else { %>
 						<%= crontab._id %>
 					<% } %>
@@ -111,15 +95,15 @@
 				<td class="nowrap-actions">
 
 		<% if (!crontab.stopped) { %>
-			<% if (crontab.logging && crontab.logging != "false") {%>
-					<a class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="stderr log" href="<%= JSON.parse(routes).logger + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-x"></i></a>
-					<a class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="stdout log" href="<%= JSON.parse(routes).stdout + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-text"></i></a>
-			<% } %>
-					<a class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Run now" onclick="runJob('<%= crontab._id %>')"><i class="bi bi-play-fill"></i></a>
-					<a class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" onclick="editJob('<%= crontab._id %>')"><i class="bi bi-pencil-square"></i></a>
 					<a class="btn btn-sm btn-link toggle-btn toggle-on" data-bs-toggle="tooltip" data-bs-placement="top" title="Disable" onclick="stopJob('<%= crontab._id %>')"><i class="bi bi-toggle-on"></i></a>
 		<% } else { %>
 					<a class="btn btn-sm btn-link toggle-btn toggle-off" data-bs-toggle="tooltip" data-bs-placement="top" title="Enable" onclick="startJob('<%= crontab._id %>')"><i class="bi bi-toggle-off"></i></a>
+		<% } %>
+					<a class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Run now" onclick="runJob('<%= crontab._id %>')"><i class="bi bi-play-fill"></i></a>
+					<a class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" onclick="editJob('<%= crontab._id %>')"><i class="bi bi-pencil-square"></i></a>
+		<% if (crontab.logging && crontab.logging != "false") { %>
+					<a class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="stderr log" href="<%= JSON.parse(routes).logger + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-x"></i></a>
+					<a class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="stdout log" href="<%= JSON.parse(routes).stdout + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-text"></i></a>
 		<% } %>
 					<a class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Duplicate" onclick="duplicateJob('<%= crontab._id %>')"><i class="bi bi-copy"></i></a>
 					<a class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" onclick="deleteJob('<%= crontab._id %>')"><i class="bi bi-trash"></i></a>

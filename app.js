@@ -78,39 +78,72 @@ app.set('port', process.env.PORT || 8000);
 
 app.get(routes.root, (req, res) => {
   crontab.reload_db();
-  crontab.crontabs((docs) => {
-    res.render('index', {
-      routes: JSON.stringify(routesRelative),
-      crontabs: JSON.stringify(docs),
-      backups: crontab.get_backup_names(),
-      env: crontab.get_env(),
-      dayjs,
+  crontab.import_crontab(() => {
+    crontab.crontabs((docs) => {
+      res.render('index', {
+        routes: JSON.stringify(routesRelative),
+        crontabs: JSON.stringify(docs),
+        backups: crontab.get_backup_names(),
+        dayjs,
+      });
     });
   });
 });
 
-app.post(routes.save, (req, res) => {
+app.post(routes.save, (req, res, next) => {
+  const afterDb = (err) => {
+    if (err && err.status === 409) {
+      return res.status(409).json({ message: 'Job was modified elsewhere', doc: err.doc });
+    }
+    if (err) return next(err.err || err);
+    crontab.deploy((deployErr) => {
+      if (deployErr) return next(deployErr);
+      res.end();
+    });
+  };
   if (req.body._id == -1) { // eslint-disable-line eqeqeq
-    crontab.create_new(req.body.name, req.body.command, req.body.schedule, req.body.logging, req.body.mailing);
+    crontab.create_new(
+      req.body.name,
+      req.body.command,
+      req.body.schedule,
+      req.body.logging,
+      req.body.mailing,
+      req.body.envVars,
+      afterDb,
+    );
   } else {
-    crontab.update(req.body);
+    crontab.update(req.body, afterDb);
   }
-  res.end();
 });
 
-app.post(routes.stop, (req, res) => {
-  crontab.status(req.body._id, true);
-  res.end();
+app.post(routes.stop, (req, res, next) => {
+  crontab.status(req.body._id, true, (err) => {
+    if (err) return next(err);
+    crontab.deploy((deployErr) => {
+      if (deployErr) return next(deployErr);
+      res.end();
+    });
+  });
 });
 
-app.post(routes.start, (req, res) => {
-  crontab.status(req.body._id, false);
-  res.end();
+app.post(routes.start, (req, res, next) => {
+  crontab.status(req.body._id, false, (err) => {
+    if (err) return next(err);
+    crontab.deploy((deployErr) => {
+      if (deployErr) return next(deployErr);
+      res.end();
+    });
+  });
 });
 
-app.post(routes.remove, (req, res) => {
-  crontab.remove(req.body._id);
-  res.end();
+app.post(routes.remove, (req, res, next) => {
+  crontab.remove(req.body._id, (err) => {
+    if (err) return next(err);
+    crontab.deploy((deployErr) => {
+      if (deployErr) return next(deployErr);
+      res.end();
+    });
+  });
 });
 
 app.post(routes.run, (req, res) => {
@@ -118,10 +151,11 @@ app.post(routes.run, (req, res) => {
   res.end();
 });
 
-app.get(routes.crontab, (req, res, next) => {
-  crontab.set_crontab(req.query.env_vars, (err) => {
-    if (err) next(err);
-    else res.end();
+app.post(routes.test_run, (req, res, next) => {
+  crontab.test_run(req.body.command, req.body.envVars, (err, result) => {
+    if (err && err.status === 400) return res.status(400).json(err);
+    if (err) return next(err);
+    res.json(result);
   });
 });
 
@@ -178,17 +212,12 @@ app.post(routes.import, (req, res, next) => {
   });
 });
 
-app.get(routes.import_crontab, (req, res, next) => {
-  crontab.backup((err) => {
-    if (err) return next(err);
-    crontab.import_crontab();
-    res.end();
-  });
+app.get(routes.import_crontab, (req, res) => {
+  crontab.import_crontab(() => res.end());
 });
 
 app.get(routes.preview_crontab, (req, res) => {
-  const envVars = crontab.get_env();
-  crontab.preview_crontab(envVars, (result) => {
+  crontab.preview_crontab((result) => {
     res.type('text/plain').send(result);
   });
 });

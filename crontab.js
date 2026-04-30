@@ -32,7 +32,7 @@ if (!fs.existsSync(logFolder)) {
   fs.mkdirSync(logFolder);
 }
 
-function buildCrontab(name, command, schedule, stopped, logging, mailing) {
+function buildCrontab(name, command, schedule, stopped, logging, mailing, envVars) {
   return {
     name,
     command,
@@ -41,6 +41,7 @@ function buildCrontab(name, command, schedule, stopped, logging, mailing) {
     timestamp: new Date().toString(),
     logging,
     mailing: mailing || {},
+    envVars: envVars || '',
   };
 }
 
@@ -87,25 +88,52 @@ exports.log_folder = logFolder;
 exports.env_file = envFile;
 exports.crontab_db_file = crontabDbFile;
 
-exports.create_new = (name, command, schedule, logging, mailing) => {
-  const tab = buildCrontab(name, command, schedule, false, logging, mailing);
+exports.create_new = (name, command, schedule, logging, mailing, envVars, callback) => {
+  const tab = buildCrontab(name, command, schedule, false, logging, mailing, envVars);
   tab.created = Date.now();
-  tab.saved = false;
-  db.insert(tab);
+  tab.version = 0;
+  db.insert(tab, (err, newDoc) => {
+    if (callback) callback(err, newDoc);
+  });
 };
 
-exports.update = (data) => {
-  const tab = buildCrontab(data.name, data.command, data.schedule, null, data.logging, data.mailing);
-  tab.saved = false;
-  db.update({ _id: data._id }, tab);
+exports.update = (data, callback) => {
+  db.findOne({ _id: data._id }, (err, doc) => {
+    if (err) return callback && callback({ status: 500, err });
+    if (!doc) return callback && callback({ status: 404 });
+
+    const submittedVersion = Number(data.version);
+    const currentVersion = Number(doc.version || 0);
+    if (!Number.isNaN(submittedVersion) && submittedVersion !== currentVersion) {
+      return callback && callback({ status: 409, doc });
+    }
+
+    const updates = {
+      name: data.name,
+      command: data.command,
+      schedule: data.schedule,
+      timestamp: new Date().toString(),
+      logging: data.logging,
+      mailing: data.mailing || {},
+      envVars: data.envVars || '',
+      version: currentVersion + 1,
+    };
+    db.update({ _id: data._id }, { $set: updates }, {}, (uerr) => {
+      if (callback) callback(uerr ? { status: 500, err: uerr } : null);
+    });
+  });
 };
 
-exports.status = (_id, stopped) => {
-  db.update({ _id }, { $set: { stopped, saved: false } });
+exports.status = (_id, stopped, callback) => {
+  db.update({ _id }, { $set: { stopped } }, {}, (err) => {
+    if (callback) callback(err);
+  });
 };
 
-exports.remove = (_id) => {
-  db.remove({ _id }, {});
+exports.remove = (_id, callback) => {
+  db.remove({ _id }, {}, (err) => {
+    if (callback) callback(err);
+  });
 };
 
 exports.crontabs = (callback) => {
@@ -141,9 +169,8 @@ exports.runjob = (_id) => {
   db.find({ _id }).exec((err, docs) => {
     if (err || !docs.length) return;
     const res = docs[0];
-    const envVars = exports.get_env();
     let cmd = makeCommand(res);
-    cmd = addEnvVars(envVars, cmd);
+    cmd = addEnvVars(res.envVars, cmd);
 
     console.log('Running job');
     console.log(`ID: ${_id}`);
@@ -156,39 +183,72 @@ exports.runjob = (_id) => {
   });
 };
 
-exports.set_crontab = (envVars, callback) => {
-  exports.crontabs((tabs) => {
-    let crontabString = '';
-    if (envVars) {
-      crontabString += `${envVars}\n`;
-    }
-    for (const tab of tabs) {
-      if (!tab.stopped) {
-        crontabString += `${tab.schedule} ${makeCommand(tab)}\n`;
-      }
-    }
+exports.test_run = (command, envVars, callback) => {
+  if (!command || !command.trim()) {
+    return callback({ status: 400, message: 'Command is required' });
+  }
+  const wrapped = addEnvVars(envVars, command);
+  exec(wrapped, { timeout: 30000, maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
+    callback(null, {
+      stdout: stdout || '',
+      stderr: stderr || '',
+      exitCode: error ? (error.code != null ? error.code : 1) : 0,
+      timedOut: error && error.killed === true,
+    });
+  });
+};
 
-    fs.writeFile(envFile, envVars, (err) => {
-      if (err) {
-        console.error(err);
-        return callback(err);
+let deployInFlight = false;
+let pendingDeploy = null;
+
+function runDeploy(callback) {
+  // Import any externally-added system crontab lines into the DB first, so a
+  // deploy triggered by an unrelated UI action doesn't wipe lines the user
+  // added directly via `crontab -e` between page loads.
+  exports.import_crontab(() => {
+    exports.crontabs((tabs) => {
+      let crontabString = '';
+      for (const tab of tabs) {
+        if (!tab.stopped) {
+          const wrapped = addEnvVars(tab.envVars, makeCommand(tab));
+          crontabString += `${tab.schedule} ${wrapped}\n`;
+        }
       }
       const fileName = process.env.CRON_IN_DOCKER !== undefined ? 'root' : 'crontab';
-      fs.writeFile(path.join(cronPath, fileName), crontabString, (err) => {
+      const filePath = path.join(cronPath, fileName);
+      fs.writeFile(filePath, crontabString, (err) => {
         if (err) {
           console.error(err);
           return callback(err);
         }
-        exec(`crontab ${path.join(cronPath, fileName)}`, (err) => {
-          if (err) {
-            console.error(err);
-            return callback(err);
+        exec(`crontab ${filePath}`, (execErr) => {
+          if (execErr) {
+            console.error(execErr);
+            return callback(execErr);
           }
-          db.update({}, { $set: { saved: true } }, { multi: true });
           callback();
         });
       });
     });
+  });
+}
+
+exports.deploy = (callback) => {
+  const cb = callback || (() => {});
+  if (deployInFlight) {
+    if (!pendingDeploy) pendingDeploy = { callbacks: [] };
+    pendingDeploy.callbacks.push(cb);
+    return;
+  }
+  deployInFlight = true;
+  runDeploy((err) => {
+    deployInFlight = false;
+    cb(err);
+    if (pendingDeploy) {
+      const cbs = pendingDeploy.callbacks;
+      pendingDeploy = null;
+      exports.deploy((err2) => cbs.forEach((c) => c(err2)));
+    }
   });
 };
 
@@ -233,15 +293,24 @@ exports.get_env = () => {
   return '';
 };
 
-exports.import_crontab = () => {
-  exec('crontab -l', (error, stdout) => {
-    const lines = stdout.split('\n');
-    const namePrefix = Date.now();
+function escapeRegex(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
-    lines.forEach((line, index) => {
-      line = line.replace(/\t+/g, ' ');
-      const regex = /^((@[a-zA-Z]+\s+)|(([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+))/;
-      const command = line.replace(regex, '').trim();
+exports.import_crontab = (callback) => {
+  exec('crontab -l', (_error, stdout) => {
+    const lines = (stdout || '').split('\n');
+    const namePrefix = Date.now();
+    const wrapperIdRegex = new RegExp(
+      `${escapeRegex(cronPath)}/([A-Za-z0-9_-]+)\\.std(?:out|err)`
+    );
+    const lineRegex = /^((@[a-zA-Z]+\s+)|(([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+))/;
+
+    const tasks = lines.map((rawLine, index) => new Promise((resolve) => {
+      const line = rawLine.replace(/\t+/g, ' ').trim();
+      if (!line || line.startsWith('#')) return resolve();
+
+      const command = line.replace(lineRegex, '').trim();
       const schedule = line.replace(command, '').trim();
 
       let isValid = false;
@@ -249,39 +318,36 @@ exports.import_crontab = () => {
         isValid = CronExpressionParser.parse(schedule) !== null;
       } catch (_e) { /* ignore */ }
 
-      if (command && schedule && isValid) {
-        const name = `${namePrefix}_${index}`;
-        db.findOne({ command, schedule }, (err, doc) => {
-          if (err) throw err;
-          if (!doc) {
-            exports.create_new(name, command, schedule, null);
-          } else {
-            doc.command = command;
-            doc.schedule = schedule;
-            exports.update(doc);
-          }
-        });
+      if (!command || !schedule || !isValid) return resolve();
+
+      const idMatch = command.match(wrapperIdRegex);
+      if (idMatch) {
+        // Wrapper line — either managed (skip) or orphan (skip; next deploy cleans).
+        return resolve();
       }
-    });
+
+      db.findOne({ command, schedule }, (err, doc) => {
+        if (err || doc) return resolve();
+        const name = `${namePrefix}_${index}`;
+        exports.create_new(name, command, schedule, null, null, () => resolve());
+      });
+    }));
+
+    Promise.all(tasks).then(() => callback && callback());
   });
 };
 
-exports.preview_crontab = (envVars, callback) => {
+exports.preview_crontab = (callback) => {
   exports.crontabs((tabs) => {
     let crontabString = '';
-    if (envVars) {
-      crontabString += `${envVars}\n`;
-    }
     for (const tab of tabs) {
       if (!tab.stopped) {
-        crontabString += `${tab.schedule} ${makeCommand(tab)}\n`;
+        const wrapped = addEnvVars(tab.envVars, makeCommand(tab));
+        crontabString += `${tab.schedule} ${wrapped}\n`;
       }
     }
     callback(crontabString);
   });
 };
 
-exports.autosave_crontab = (callback) => {
-  const envVars = exports.get_env();
-  exports.set_crontab(envVars, callback);
-};
+exports.autosave_crontab = (callback) => exports.deploy(callback);

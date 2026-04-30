@@ -6,7 +6,7 @@ const routes = {
   root: '/',
   save: '/save',
   run: '/runjob',
-  crontab: '/crontab',
+  test_run: '/test_run',
   stop: '/stop',
   start: '/start',
   remove: '/remove',
