@@ -40,22 +40,16 @@
 <body>
 <%- include('navbar.ejs') -%>
 <div class="app-container">
-	<div class="page-header">
-		<h2>Cronjobs</h2>
-		<div class="btn-group btn-group-sm" role="group">
-			<a class="btn btn-outline-secondary" onclick="import_db()"><i class="bi bi-box-arrow-in-down"></i> Import</a>
-			<a class="btn btn-outline-secondary" href="<%= JSON.parse(routes).export %>"><i class="bi bi-box-arrow-up"></i> Export</a>
-		</div>
-	</div>
 	<div class="app-card">
 		<div class="toolbar d-flex flex-wrap align-items-center gap-2">
-			<form id="import_form" enctype="multipart/form-data" action="<%= JSON.parse(routes).import %>" method="post" style="display:none">
-				<input type="file" id="import_file" name="import_file" onchange="$('#import_form').submit()"/>
-			</form>
 			<a class="btn btn-sm btn-primary" onclick="newJob();"><i class="bi bi-plus-circle"></i> New Job</a>
-			<div class="btn-group btn-group-sm ms-auto" role="group">
+			<div class="btn-group btn-group-sm" role="group">
 				<a class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Refresh from system crontab" onclick="refreshCrontab();"><i class="bi bi-arrow-clockwise"></i></a>
 				<a class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Preview crontab" onclick="previewCrontab();"><i class="bi bi-eye"></i></a>
+			</div>
+			<div class="btn-group btn-group-sm ms-auto" role="group">
+				<a class="btn btn-outline-secondary" onclick="import_db()"><i class="bi bi-box-arrow-in-down"></i> Import</a>
+				<a class="btn btn-outline-secondary" href="<%= JSON.parse(routes).export %>"><i class="bi bi-box-arrow-up"></i> Export</a>
 			</div>
 		</div>
 	</div>

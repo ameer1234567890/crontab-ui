@@ -370,11 +370,37 @@ function restore_backup(db_name) {
 }
 
 function import_db() {
-  messageBox(
-    '<p> Do you want to import crontab?<br /> A backup will be created automatically before importing.</p>',
-    'Confirm import from crontab', null, null, function() {
-      $('#import_file').click();
-    });
+  var body = '<p class="mb-2">Pick a <code>crontab.db</code> file to import.</p>'
+    + '<p class="text-muted small mb-3">A backup of your current jobs will be created automatically before the import completes, so you can restore from the <strong>Backups</strong> menu if anything goes wrong.</p>'
+    + '<input type="file" class="form-control form-control-sm" id="import-file-modal" accept=".db,application/octet-stream" />'
+    + '<div class="form-text small mt-1" id="import-file-status">Choose a file, then click Import.</div>';
+  messageBox(body, 'Import database', 'Import', null, function() {
+    var input = document.getElementById('import-file-modal');
+    var status = document.getElementById('import-file-status');
+    if (!input || !input.files || input.files.length === 0) {
+      if (status) {
+        status.textContent = 'Pick a file first.';
+        status.classList.add('text-danger');
+      }
+      // Re-open the modal since messageBox auto-hid it on click.
+      getModal('popup').show();
+      return;
+    }
+    var fd = new FormData();
+    fd.append('import_file', input.files[0]);
+    fetch(routes.import, { method: 'POST', body: fd })
+      .then(function(r) {
+        if (!r.ok) throw new Error('Import failed (' + r.status + ')');
+        location.reload();
+      })
+      .catch(function(err) {
+        messageBox('<p class="text-danger mb-0">' + err.message + '</p>', 'Import failed', 'OK', null, null);
+      });
+  });
+  setTimeout(function() {
+    var input = document.getElementById('import-file-modal');
+    if (input) input.focus();
+  }, 200);
 }
 
 function setMailConfig(a) {
