@@ -432,8 +432,51 @@ function collapsedCommand() {
 function job_string() {
   var cmd = collapsedCommand();
   $('#job-string').val(schedule + ' ' + cmd);
+  updateScheduleHuman(schedule);
   return schedule + ' ' + cmd;
 }
+
+function updateScheduleHuman(s) {
+  var el = document.getElementById('job-human');
+  if (!el) return;
+  var human = '';
+  if (s === '@reboot') {
+    human = 'On system startup';
+  } else if (s && typeof cronstrue !== 'undefined') {
+    var trimmed = s.trim();
+    if (trimmed.charAt(0) === '@') {
+      try { human = cronstrue.toString(trimmed); } catch (_e) { human = ''; }
+    } else {
+      var parts = trimmed.split(/\s+/);
+      var anyEmpty = parts.length < 5 || parts.some(function(p) { return p.length === 0; });
+      if (!anyEmpty) {
+        try { human = cronstrue.toString(trimmed); } catch (_e) { human = ''; }
+      }
+    }
+  }
+  el.value = human;
+  el.title = human;
+  el.classList.remove('is-invalid');
+}
+
+function currentCronFields() {
+  return [
+    $('#job-minute').val().trim(),
+    $('#job-hour').val().trim(),
+    $('#job-day').val().trim(),
+    $('#job-month').val().trim(),
+    $('#job-week').val().trim(),
+  ].join(' ');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.cron-field').forEach(function(el) {
+    el.addEventListener('input', function() {
+      schedule = currentCronFields();
+      job_string();
+    });
+  });
+});
 
 function set_schedule() {
   schedule = $('#job-minute').val() + ' ' + $('#job-hour').val() + ' ' + $('#job-day').val() + ' ' + $('#job-month').val() + ' ' + $('#job-week').val();

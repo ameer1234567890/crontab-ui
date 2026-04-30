@@ -28,12 +28,13 @@
 	</div>
 
 	<div class="d-flex align-items-end gap-3 mb-2">
-		<div style="width:64px;"><label class="form-label small mb-1">Minute</label><input type="text" class="form-control form-control-sm text-center" id="job-minute" value="*" onclick="this.select();"/></div>
-		<div style="width:64px;"><label class="form-label small mb-1">Hour</label><input type="text" class="form-control form-control-sm text-center" id="job-hour" value="*" onclick="this.select();"/></div>
-		<div style="width:64px;"><label class="form-label small mb-1">Day</label><input type="text" class="form-control form-control-sm text-center" id="job-day" value="*" onclick="this.select();"/></div>
-		<div style="width:64px;"><label class="form-label small mb-1">Month</label><input type="text" class="form-control form-control-sm text-center" id="job-month" value="*" onclick="this.select();"/></div>
-		<div style="width:64px;"><label class="form-label small mb-1">Week</label><input type="text" class="form-control form-control-sm text-center" id="job-week" value="*" onclick="this.select();"/></div>
+		<div style="width:64px;"><label class="form-label small mb-1">Minute</label><input type="text" class="form-control form-control-sm text-center cron-field" id="job-minute" value="*" onclick="this.select();"/></div>
+		<div style="width:64px;"><label class="form-label small mb-1">Hour</label><input type="text" class="form-control form-control-sm text-center cron-field" id="job-hour" value="*" onclick="this.select();"/></div>
+		<div style="width:64px;"><label class="form-label small mb-1">Day</label><input type="text" class="form-control form-control-sm text-center cron-field" id="job-day" value="*" onclick="this.select();"/></div>
+		<div style="width:64px;"><label class="form-label small mb-1">Month</label><input type="text" class="form-control form-control-sm text-center cron-field" id="job-month" value="*" onclick="this.select();"/></div>
+		<div style="width:64px;"><label class="form-label small mb-1">Week</label><input type="text" class="form-control form-control-sm text-center cron-field" id="job-week" value="*" onclick="this.select();"/></div>
 		<a class="btn btn-primary btn-sm" onclick="set_schedule();">Set</a>
+		<input type="text" class="form-control form-control-sm flex-grow-1" id="job-human" readonly placeholder="Schedule preview" title="Human-readable schedule" style="min-width:0;"/>
 	</div>
 
 	<div class="mb-2">

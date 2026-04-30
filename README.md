@@ -23,6 +23,7 @@ The UI now reads cleanly in dark mode end-to-end and a few rough edges are gone:
 - **Toggle without a full reload** — flipping enable/disable now updates the row in place (icon, tooltip, row highlight) instead of forcing a `location.reload()`. Search filter, sort, scroll position, and pagination are all preserved.
 - **Back button on the backup viewing page** — returns to the cronjobs listing (or `BASE_URL` if configured).
 - **Looser default rate limit** — bumped `express-rate-limit` from `300 req / 15 min` to `1000 req / 10 min`. With DataTables + Bootstrap-icons fonts + several refreshes, the old budget tripped during normal use.
+- **Live schedule preview in the Job modal** — a read-only field next to the **Set** button shows the cron expression in plain English (powered by [`cronstrue`](https://github.com/bradymholt/cRonstrue), bundled client-side). It updates as you type in any of the Minute/Hour/Day/Month/Week fields, on every Quick Schedule click, and when you open an existing job for editing. Stays blank for the all-`*` default and for half-typed expressions so it doesn't shout "invalid" while you're still working.
 
 ---
 

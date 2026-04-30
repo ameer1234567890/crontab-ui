@@ -327,6 +327,17 @@ div.dataTables_wrapper div.dataTables_filter label {
 #job .modal-body .d-flex.align-items-end > div .form-label { font-size: 0.7rem; }
 #job .modal-body .d-flex.flex-wrap.align-items-center.gap-3 { gap: 0.5rem !important; }
 #job #job-string { font-size: 0.78rem; }
+#job #job-human {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.45rem;
+  color: var(--app-text-muted);
+  background-color: rgba(127, 127, 127, 0.12);
+  cursor: default;
+}
+#job #job-human:focus {
+  box-shadow: none;
+  border-color: var(--app-card-border);
+}
 #job .modal-header { padding: 0.5rem 1rem; }
 #job .modal-header .modal-title { font-size: 0.95rem; }
 #job .modal-footer { padding: 0.5rem 1rem; }
