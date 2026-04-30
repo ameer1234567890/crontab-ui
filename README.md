@@ -10,7 +10,13 @@ Crontab UI
 
 ## What's new in this fork
 
-> **macOS users:** grab the native desktop app — [Download `Crontab-UI-0.4.3-arm64.dmg`](https://github.com/kanihal/crontab-ui/releases/latest) (Apple Silicon) or `-x64.dmg` for Intel. No Node setup required; the server runs in the background and tears down on quit. After the DMG, drag **Crontab UI** to `/Applications` and run `xattr -dr com.apple.quarantine "/Applications/Crontab UI.app"` once to clear the unsigned-build warning. Cron data lives at `~/Library/Application Support/crontab-ui/crontabs/`.
+**macOS users — native desktop app, no Node setup needed:**
+
+- Download from [Releases](https://github.com/kanihal/crontab-ui/releases/latest): `Crontab-UI-0.4.3-arm64.dmg` (Apple Silicon) or `Crontab-UI-0.4.3-x64.dmg` (Intel).
+- Open the DMG and drag **Crontab UI** to `/Applications`.
+- Clear the unsigned-build quarantine flag once: `xattr -dr com.apple.quarantine "/Applications/Crontab UI.app"`.
+- Launch from Spotlight or Applications. The Express server runs in the background on a free local port and shuts down when you close the window.
+- Cron data lives at `~/Library/Application Support/crontab-ui/crontabs/`.
 
 ![Crontab UI in dark mode](screenshots/ui-dark-overview.png)
 
