@@ -58,9 +58,9 @@ The Electron wrapper lives in [`electron-main.js`](electron-main.js); the icon p
 
 ## Recent UI improvements
 
-![Crontab UI](screenshots/ui-overview.png)
+![Crontab UI](screenshots/ui-dark-overview.png)
 
-![Job edit modal](screenshots/ui-edit-modal.png)
+![Job edit modal](screenshots/ui-dark-edit-modal.png)
 
 This fork includes a visual refresh of the UI:
 
