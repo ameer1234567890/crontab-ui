@@ -8,7 +8,7 @@ Crontab UI
 [![npm](https://img.shields.io/docker/pulls/alseambusher/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/l/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 
-> **macOS users:** grab the native desktop app — [Download `Crontab-UI-0.4.3-arm64.dmg`](https://github.com/kanihal/crontab-ui/releases/latest) (Apple Silicon). No Node setup required; the server runs in the background and tears down on quit. [Install instructions ↓](#update--2026-04-29-macos-desktop-app)
+> **macOS users:** grab the native desktop app — [Download `Crontab-UI-0.4.3-arm64.dmg`](https://github.com/kanihal/crontab-ui/releases/latest) (Apple Silicon) or `-x64.dmg` for Intel. No Node setup required; the server runs in the background and tears down on quit. After the DMG, drag **Crontab UI** to `/Applications` and run `xattr -dr com.apple.quarantine "/Applications/Crontab UI.app"` once to clear the unsigned-build warning. Cron data lives at `~/Library/Application Support/crontab-ui/crontabs/`.
 
 ## Update — 2026-04-30: dark-mode polish, navbar Backup, instant toggle
 
@@ -29,33 +29,6 @@ The UI now reads cleanly in dark mode end-to-end and a few rough edges are gone:
 
 ---
 
-## Update — 2026-04-29: macOS desktop app
-
-A native macOS `.app` is now available so you don't have to keep `node app.js` running in a terminal. Launching it spawns the Express server on a free local port in the background, opens the UI in its own window, and tears the server down again when you quit the window.
-
-![Crontab UI desktop app](screenshots/desktop-app.png)
-
-**Install (Apple Silicon):** download `Crontab-UI-0.4.3-arm64.dmg` from the [Releases page](https://github.com/kanihal/crontab-ui/releases), open the DMG, drag **Crontab UI** to `/Applications`. On first launch macOS may complain because the build is unsigned; clear quarantine once with:
-
-```sh
-xattr -dr com.apple.quarantine "/Applications/Crontab UI.app"
-```
-
-Then launch from Spotlight or the Applications folder. Cron data lives at `~/Library/Application Support/crontab-ui/crontabs/`.
-
-**Build it yourself:**
-
-```sh
-npm install
-npm run icon       # generates build/icon.icns
-npm run electron   # dev mode (no packaging)
-npm run dist:mac   # builds dist/Crontab UI-<ver>-arm64.dmg
-```
-
-The Electron wrapper lives in [`electron-main.js`](electron-main.js); the icon pipeline is in [`scripts/`](scripts/).
-
----
-
 ## Recent UI improvements
 
 ![Crontab UI](screenshots/ui-dark-overview.png)
@@ -71,6 +44,8 @@ This fork includes a visual refresh of the UI:
 - **Tighter table** — narrower `#` and `Last Modified` columns, monospace command text, hover row tint, uppercase header labels.
 - **Compact edit modal** — fits on one screen without scrolling; smaller form controls, inline cron-field labels, scrollable body so Save/Cancel stay visible.
 - **Quick Schedule presets that fill the cron fields** — the seven preset buttons (Minutely, Hourly, Daily, Monthly, Weekly, Yearly, Startup) sit on a single uniform-height row and now populate the Minute/Hour/Day/Month/Week inputs in addition to setting the schedule string, so you can pick a preset and fine-tune from there.
+- **Inline Test Run** — a **Test Run** button in the Job modal executes the command (with the configured environment variables prepended) and shows the exit code, stdout, and stderr inline below the button. No need to wait for the next cron tick or open a terminal to verify your command works.
+- **Per-job environment variables** — an **Environment Variables (Optional)** field in the Job modal accepts one `KEY=value` per line (e.g. `PATH=/usr/local/bin:/usr/bin`, `MAILTO=ops@example.com`). The values are prepended to the job's command at deploy time and during Test Run, so you don't have to bake them into a wrapper script.
 - **Refined navbar** — brand left-aligned with the page content; `Backups` dropdown and a GitHub icon right-aligned.
 
 ---
