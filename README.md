@@ -10,8 +10,6 @@ Crontab UI
 
 ## What's new in this fork
 
-This is a maintained fork of [`alseambusher/crontab-ui`](https://github.com/alseambusher/crontab-ui) with a UI refresh, a few quality-of-life features, and a packaged macOS desktop app. Everything below the next divider is the original upstream README.
-
 > **macOS users:** grab the native desktop app — [Download `Crontab-UI-0.4.3-arm64.dmg`](https://github.com/kanihal/crontab-ui/releases/latest) (Apple Silicon) or `-x64.dmg` for Intel. No Node setup required; the server runs in the background and tears down on quit. After the DMG, drag **Crontab UI** to `/Applications` and run `xattr -dr com.apple.quarantine "/Applications/Crontab UI.app"` once to clear the unsigned-build warning. Cron data lives at `~/Library/Application Support/crontab-ui/crontabs/`.
 
 ![Crontab UI in dark mode](screenshots/ui-dark-overview.png)
@@ -44,6 +42,8 @@ This is a maintained fork of [`alseambusher/crontab-ui`](https://github.com/alse
 For a per-release breakdown see the [Releases page](https://github.com/kanihal/crontab-ui/releases).
 
 ---
+
+## Original readme from [`alseambusher/crontab-ui`](https://github.com/alseambusher/crontab-ui)
 
 Editing the plain text crontab is error prone for managing jobs, e.g., adding jobs, deleting jobs, or pausing jobs. A small mistake can easily bring down all the jobs and might cost you a lot of time. With Crontab UI, it is very easy to manage crontab. Here are the key features of Crontab UI.
 
