@@ -196,6 +196,17 @@ body > .app-container {
   line-height: 1.2;
 }
 
+/* All row actions are outlined; keep them visually equal-weight with a
+   transparent background and a subtle hover lift. */
+#main_table td.nowrap-actions .action-btn {
+  background-color: transparent;
+  --bs-btn-bg: transparent;
+}
+#main_table td.nowrap-actions .action-btn:hover,
+#main_table td.nowrap-actions .action-btn:focus {
+  background-color: rgba(127, 127, 127, 0.08);
+}
+
 #main_table td.nowrap-actions .btn:last-child {
   margin-right: 0;
 }
@@ -207,8 +218,8 @@ body > .app-container {
 
 #main_table td.nowrap-actions .toggle-btn {
   text-decoration: none;
-  background: var(--app-card-bg);
-  border: 1px solid var(--app-card-border);
+  background: transparent;
+  border: 1px solid var(--app-text-muted);
   padding: 0.2rem 0.45rem;
   display: inline-flex;
   align-items: center;

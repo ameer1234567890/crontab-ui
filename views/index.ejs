@@ -105,18 +105,18 @@
 				<td class="nowrap-actions">
 
 		<% if (!crontab.stopped) { %>
-					<a class="btn btn-sm btn-link toggle-btn toggle-on" data-bs-toggle="tooltip" data-bs-placement="top" title="Disable" onclick="stopJob('<%= crontab._id %>')"><i class="bi bi-toggle-on"></i></a>
+					<a class="btn btn-sm btn-link toggle-btn toggle-on" data-bs-toggle="tooltip" data-bs-placement="top" title="Disable" onclick="stopJob('<%= crontab._id %>', this)"><i class="bi bi-toggle-on"></i></a>
 		<% } else { %>
-					<a class="btn btn-sm btn-link toggle-btn toggle-off" data-bs-toggle="tooltip" data-bs-placement="top" title="Enable" onclick="startJob('<%= crontab._id %>')"><i class="bi bi-toggle-off"></i></a>
+					<a class="btn btn-sm btn-link toggle-btn toggle-off" data-bs-toggle="tooltip" data-bs-placement="top" title="Enable" onclick="startJob('<%= crontab._id %>', this)"><i class="bi bi-toggle-off"></i></a>
 		<% } %>
-					<a class="btn btn-sm btn-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Run now" onclick="runJob('<%= crontab._id %>')"><i class="bi bi-play-fill"></i></a>
-					<a class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" onclick="editJob('<%= crontab._id %>')"><i class="bi bi-pencil-square"></i></a>
+					<a class="btn btn-sm btn-outline-success action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Run now" onclick="runJob('<%= crontab._id %>')"><i class="bi bi-play-fill"></i></a>
+					<a class="btn btn-sm btn-outline-primary action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" onclick="editJob('<%= crontab._id %>')"><i class="bi bi-pencil-square"></i></a>
 		<% if (crontab.logging && crontab.logging != "false") { %>
-					<a class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="stderr log" href="<%= JSON.parse(routes).logger + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-x"></i></a>
-					<a class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="stdout log" href="<%= JSON.parse(routes).stdout + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-text"></i></a>
+					<a class="btn btn-sm btn-outline-danger action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="stderr log" href="<%= JSON.parse(routes).logger + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-x"></i></a>
+					<a class="btn btn-sm btn-outline-info action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="stdout log" href="<%= JSON.parse(routes).stdout + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-text"></i></a>
 		<% } %>
-					<a class="btn btn-sm btn-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Duplicate" onclick="duplicateJob('<%= crontab._id %>')"><i class="bi bi-copy"></i></a>
-					<a class="btn btn-sm btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" onclick="deleteJob('<%= crontab._id %>')"><i class="bi bi-trash"></i></a>
+					<a class="btn btn-sm btn-outline-secondary action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Duplicate" onclick="duplicateJob('<%= crontab._id %>')"><i class="bi bi-copy"></i></a>
+					<a class="btn btn-sm btn-outline-danger action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" onclick="deleteJob('<%= crontab._id %>')"><i class="bi bi-trash"></i></a>
 				</td>
 			</tr>
 	<% }); %>

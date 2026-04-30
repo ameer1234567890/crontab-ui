@@ -102,20 +102,43 @@ function deleteJob(_id) {
   });
 }
 
-function stopJob(_id) {
-  messageBox('<p> Do you want to stop this Job? </p>', 'Confirm stop job', null, null, function() {
-    $.post(routes.stop, {_id: _id}, function() {
-      location.reload();
-    });
-  });
+function stopJob(_id, btn) {
+  setJobEnabled(_id, false, btn);
 }
 
-function startJob(_id) {
-  messageBox('<p> Do you want to start this Job? </p>', 'Confirm start job', null, null, function() {
-    $.post(routes.start, {_id: _id}, function() {
-      location.reload();
+function startJob(_id, btn) {
+  setJobEnabled(_id, true, btn);
+}
+
+function setJobEnabled(_id, enabled, btn) {
+  var url = enabled ? routes.start : routes.stop;
+  if (btn) btn.classList.add('disabled');
+  $.post(url, {_id: _id})
+    .done(function() {
+      if (!btn) return;
+      btn.classList.remove('disabled');
+      btn.classList.toggle('toggle-on', enabled);
+      btn.classList.toggle('toggle-off', !enabled);
+      var icon = btn.querySelector('i.bi');
+      if (icon) {
+        icon.classList.toggle('bi-toggle-on', enabled);
+        icon.classList.toggle('bi-toggle-off', !enabled);
+      }
+      var newTitle = enabled ? 'Disable' : 'Enable';
+      btn.setAttribute('title', newTitle);
+      btn.setAttribute('data-bs-original-title', newTitle);
+      var tip = bootstrap.Tooltip.getInstance(btn);
+      if (tip) { tip.hide(); tip.dispose(); }
+      new bootstrap.Tooltip(btn);
+      btn.onclick = enabled
+        ? function() { stopJob(_id, btn); }
+        : function() { startJob(_id, btn); };
+      var tr = btn.closest('tr');
+      if (tr) tr.classList.toggle('table-primary', !enabled);
+    })
+    .fail(function() {
+      if (btn) btn.classList.remove('disabled');
     });
-  });
 }
 
 function runJob(_id) {

@@ -8,6 +8,24 @@ Crontab UI
 [![npm](https://img.shields.io/docker/pulls/alseambusher/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/l/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 
+## Update — 2026-04-30: dark-mode polish, navbar Backup, instant toggle
+
+The UI now reads cleanly in dark mode end-to-end and a few rough edges are gone:
+
+![Crontab UI in dark mode](screenshots/ui-dark-overview.png)
+
+![Job edit modal in dark mode](screenshots/ui-dark-edit-modal.png)
+
+- **Dark mode fixes** — disabled-job rows used Bootstrap's hard-coded `.table-primary` (light blue with black text) and were nearly unreadable on a dark background. They now use a deeper indigo-tinted shade with themed text. The Test Run output and the Crontab Preview panes also got a near-black background plus a slate border so they stand out from the modal body instead of blending in.
+- **Backup moved to the navbar** — `Backup` is now a bordered nav-link sitting just before the `Backups` dropdown, pulling that primary action out of the page header.
+- **Tighter Quick Schedule pills** — the seven preset buttons (Minutely, Hourly, …, Startup) shrank to match the rest of the modal density.
+- **Outlined, color-coded row actions** — Run (green), Edit (blue), stderr-log (red), stdout-log (cyan), Duplicate (gray), Delete (red). All transparent-background outlines so they're visually equal-weight; the enable/disable pill picks up a matching muted-tone border.
+- **Toggle without a full reload** — flipping enable/disable now updates the row in place (icon, tooltip, row highlight) instead of forcing a `location.reload()`. Search filter, sort, scroll position, and pagination are all preserved.
+- **Back button on the backup viewing page** — returns to the cronjobs listing (or `BASE_URL` if configured).
+- **Looser default rate limit** — bumped `express-rate-limit` from `300 req / 15 min` to `1000 req / 10 min`. With DataTables + Bootstrap-icons fonts + several refreshes, the old budget tripped during normal use.
+
+---
+
 ## Update — 2026-04-29: macOS desktop app
 
 A native macOS `.app` is now available so you don't have to keep `node app.js` running in a terminal. Launching it spawns the Express server on a free local port in the background, opens the UI in its own window, and tears the server down again when you quit the window.
