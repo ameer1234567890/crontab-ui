@@ -36,7 +36,10 @@
 <%- include('navbar.ejs') -%>
 <div class="app-container">
 	<div class="page-header">
-		<h2><%= db %></h2>
+		<div class="d-flex align-items-center gap-2">
+			<a class="btn btn-sm btn-outline-secondary" href="<%= JSON.parse(routes).root || '/' %>" title="Back to cronjobs"><i class="bi bi-arrow-left"></i> Back</a>
+			<h2 class="mb-0"><%= db %></h2>
+		</div>
 	</div>
 	<div class="app-card">
 	<table class="table">
