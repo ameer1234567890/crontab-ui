@@ -8,45 +8,40 @@ Crontab UI
 [![npm](https://img.shields.io/docker/pulls/alseambusher/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/l/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 
+## What's new in this fork
+
+This is a maintained fork of [`alseambusher/crontab-ui`](https://github.com/alseambusher/crontab-ui) with a UI refresh, a few quality-of-life features, and a packaged macOS desktop app. Everything below the next divider is the original upstream README.
+
 > **macOS users:** grab the native desktop app — [Download `Crontab-UI-0.4.3-arm64.dmg`](https://github.com/kanihal/crontab-ui/releases/latest) (Apple Silicon) or `-x64.dmg` for Intel. No Node setup required; the server runs in the background and tears down on quit. After the DMG, drag **Crontab UI** to `/Applications` and run `xattr -dr com.apple.quarantine "/Applications/Crontab UI.app"` once to clear the unsigned-build warning. Cron data lives at `~/Library/Application Support/crontab-ui/crontabs/`.
-
-## Update — 2026-04-30: dark-mode polish, navbar Backup, instant toggle
-
-The UI now reads cleanly in dark mode end-to-end and a few rough edges are gone:
 
 ![Crontab UI in dark mode](screenshots/ui-dark-overview.png)
 
 ![Job edit modal in dark mode](screenshots/ui-dark-edit-modal.png)
 
-- **Dark mode fixes** — disabled-job rows used Bootstrap's hard-coded `.table-primary` (light blue with black text) and were nearly unreadable on a dark background. They now use a deeper indigo-tinted shade with themed text. The Test Run output and the Crontab Preview panes also got a near-black background plus a slate border so they stand out from the modal body instead of blending in.
-- **Backup moved to the navbar** — `Backup` is now a bordered nav-link sitting just before the `Backups` dropdown, pulling that primary action out of the page header.
-- **Tighter Quick Schedule pills** — the seven preset buttons (Minutely, Hourly, …, Startup) shrank to match the rest of the modal density.
-- **Outlined, color-coded row actions** — Run (green), Edit (blue), stderr-log (red), stdout-log (cyan), Duplicate (gray), Delete (red). All transparent-background outlines so they're visually equal-weight; the enable/disable pill picks up a matching muted-tone border.
-- **Toggle without a full reload** — flipping enable/disable now updates the row in place (icon, tooltip, row highlight) instead of forcing a `location.reload()`. Search filter, sort, scroll position, and pagination are all preserved.
-- **Back button on the backup viewing page** — returns to the cronjobs listing (or `BASE_URL` if configured).
-- **Looser default rate limit** — bumped `express-rate-limit` from `300 req / 15 min` to `1000 req / 10 min`. With DataTables + Bootstrap-icons fonts + several refreshes, the old budget tripped during normal use.
-- **Live schedule preview in the Job modal** — a read-only field next to the **Set** button shows the cron expression in plain English (powered by [`cronstrue`](https://github.com/bradymholt/cRonstrue), bundled client-side). It updates as you type in any of the Minute/Hour/Day/Month/Week fields, on every Quick Schedule click, and when you open an existing job for editing. Stays blank for the all-`*` default and for half-typed expressions so it doesn't shout "invalid" while you're still working.
+**Visual refresh**
+- Centered max-width layout (1280px) with rounded card sections and a tighter, monospace-command table.
+- Light / dark / system theme toggle in the navbar, with disabled-job rows, the Test Run console, and the Crontab Preview pane all themed correctly in dark mode.
+- Outlined, color-coded row actions (Run = green, Edit = blue, stderr-log = red, stdout-log = cyan, Duplicate = gray, Delete = red) with hover tooltips. Distinct toggle icons (green pill = running, gray pill = stopped) replace the previous duplicated play icons.
+- Flatter toolbar — `New Job  ·  Refresh  ·  Preview` on the left, `Import  ·  Export` on the right; `Backup` lives in the navbar with a small archive icon and a download CTA.
 
----
+**Editing experience**
+- Compact edit modal that fits on one screen without scrolling.
+- Quick Schedule presets (Minutely, Hourly, Daily, Monthly, Weekly, Yearly, Startup) populate the Minute/Hour/Day/Month/Week inputs on click so you can fine-tune from there.
+- **Live human-readable schedule preview** next to the Set button — the cron expression rendered in plain English by [`cronstrue`](https://github.com/bradymholt/cRonstrue) (bundled client-side, ~22 KB). Updates as you type in any cron field, on every Quick Schedule click, and on open. Stays blank for the all-`*` default and half-typed expressions.
+- **Inline Test Run** — a **Test Run** button in the Job modal executes the command (with the configured environment variables prepended) and shows exit code, stdout, and stderr inline. No need to wait for the next cron tick to verify your command works.
+- **Per-job environment variables** — an **Environment Variables (Optional)** field in the Job modal accepts one `KEY=value` per line (e.g. `PATH=/usr/local/bin:/usr/bin`, `MAILTO=ops@example.com`). Prepended to the command at both deploy time and Test Run, so you don't have to bake them into a wrapper script.
 
-## Recent UI improvements
+**Backups & import**
+- Named backups: clicking **Backup** opens a small modal pre-filled with a local timestamp; supply any name and it's saved as `backup <name>.db`. Re-using the same name overwrites the previous file by design. Backups dropdown is sorted by mtime (newest first) and labels strip the `backup ` / `.db` boilerplate.
+- Import opens a modal with a visible file picker and explains that an automatic backup is created server-side before the new database overwrites the existing one.
+- Toggling enable/disable updates the row in place (icon, tooltip, row highlight) instead of doing a full `location.reload()`, so search filter, sort, scroll position, and pagination are preserved.
+- Auto-sync DB with system crontab on every page load so jobs added directly via `crontab -e` are picked up.
 
-![Crontab UI](screenshots/ui-dark-overview.png)
+**Other**
+- `express-rate-limit` default raised from `300 req / 15 min` to `1000 req / 10 min` so static-asset-heavy refreshes don't trigger 429s.
+- macOS desktop app (Electron wrapper) — see the install callout above; build it yourself with `npm run icon && npm run dist:mac`.
 
-![Job edit modal](screenshots/ui-dark-edit-modal.png)
-
-This fork includes a visual refresh of the UI:
-
-- **Constrained layout** — content is now centered with a max-width of 1280px so rows stay readable on wide monitors.
-- **Card-based sections** — environment variables, toolbar, and the job table sit in tidy rounded cards on a soft background.
-- **Reorganized toolbar** — `New Job` on the left; `Get from crontab` → 👁 preview → `Save to crontab` grouped on the right; `Backup`, `Import`, `Export` moved to the page header.
-- **Compact, icon-only row actions** with hover tooltips — Run now, Edit, enable/disable toggle, Duplicate, Delete. Distinct toggle icons (green pill = running, gray pill = stopped) replace the previous duplicated play icons.
-- **Tighter table** — narrower `#` and `Last Modified` columns, monospace command text, hover row tint, uppercase header labels.
-- **Compact edit modal** — fits on one screen without scrolling; smaller form controls, inline cron-field labels, scrollable body so Save/Cancel stay visible.
-- **Quick Schedule presets that fill the cron fields** — the seven preset buttons (Minutely, Hourly, Daily, Monthly, Weekly, Yearly, Startup) sit on a single uniform-height row and now populate the Minute/Hour/Day/Month/Week inputs in addition to setting the schedule string, so you can pick a preset and fine-tune from there.
-- **Inline Test Run** — a **Test Run** button in the Job modal executes the command (with the configured environment variables prepended) and shows the exit code, stdout, and stderr inline below the button. No need to wait for the next cron tick or open a terminal to verify your command works.
-- **Per-job environment variables** — an **Environment Variables (Optional)** field in the Job modal accepts one `KEY=value` per line (e.g. `PATH=/usr/local/bin:/usr/bin`, `MAILTO=ops@example.com`). The values are prepended to the job's command at deploy time and during Test Run, so you don't have to bake them into a wrapper script.
-- **Refined navbar** — brand left-aligned with the page content; `Backups` dropdown and a GitHub icon right-aligned.
+For a per-release breakdown see the [Releases page](https://github.com/kanihal/crontab-ui/releases).
 
 ---
 
