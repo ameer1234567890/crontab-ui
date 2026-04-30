@@ -256,23 +256,44 @@ exports.get_backup_names = () => {
   const backups = fs.readdirSync(dbFolder)
     .filter((file) => file.indexOf('backup') === 0);
 
-  const backupDate = (name) => {
-    const t = name.split('backup')[1];
-    return new Date(t.substring(0, t.length - 3)).valueOf();
+  // Sort by file mtime, newest first. This is more reliable than parsing
+  // a timestamp out of the filename because (a) custom-named backups have
+  // no timestamp in the name and (b) re-using a name overwrites the file,
+  // which should bump it to the top of the dropdown.
+  const mtime = (name) => {
+    try {
+      return fs.statSync(path.join(dbFolder, name)).mtime.valueOf();
+    } catch (_e) {
+      return 0;
+    }
   };
-
-  backups.sort((a, b) => backupDate(b) - backupDate(a));
+  backups.sort((a, b) => mtime(b) - mtime(a));
   return backups;
 };
 
-exports.backup = (callback) => {
-  const dest = path.join(dbFolder, `backup ${new Date().toString().replace('+', ' ')}.db`);
+function sanitizeBackupName(raw) {
+  if (!raw) return '';
+  return String(raw).replace(/[^A-Za-z0-9 _.-]/g, '').trim().slice(0, 64);
+}
+
+exports.backup = (nameOrCallback, callback) => {
+  let name = '';
+  let cb = callback;
+  if (typeof nameOrCallback === 'function') {
+    cb = nameOrCallback;
+  } else {
+    name = sanitizeBackupName(nameOrCallback);
+  }
+  const filename = name
+    ? `backup ${name}.db`
+    : `backup ${new Date().toString().replace('+', ' ')}.db`;
+  const dest = path.join(dbFolder, filename);
   fs.copyFile(crontabDbFile, dest, (err) => {
     if (err) {
       console.error(err);
-      return callback(err);
+      return cb(err);
     }
-    callback();
+    cb();
   });
 };
 

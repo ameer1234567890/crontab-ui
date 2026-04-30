@@ -318,12 +318,39 @@ function resetTestResult() {
   if (status) status.textContent = '';
 }
 
+function defaultBackupName() {
+  var d = new Date();
+  var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
+  var tzMatch = d.toString().match(/\(([^)]+)\)/);
+  var tz = '';
+  if (tzMatch) {
+    tz = tzMatch[1].split(' ').map(function(w) { return w.charAt(0); }).join('');
+  } else {
+    var off = -d.getTimezoneOffset();
+    var sign = off >= 0 ? '+' : '-';
+    tz = 'UTC' + sign + pad(Math.floor(Math.abs(off) / 60)) + pad(Math.abs(off) % 60);
+  }
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate())
+    + ' ' + pad(d.getHours()) + '.' + pad(d.getMinutes()) + ' ' + tz;
+}
+
 function doBackup() {
-  messageBox('<p> Do you want to take backup? </p>', 'Confirm backup', null, null, function() {
-    $.get(routes.backup, {}, function() {
+  var defaultName = defaultBackupName();
+  var safeDefault = defaultName.replace(/"/g, '&quot;');
+  var body = '<label for="backup-name-input" class="form-label small mb-1">Backup name</label>'
+    + '<input type="text" class="form-control form-control-sm" id="backup-name-input" value="' + safeDefault + '" />'
+    + '<div class="form-text small mt-1">Saved as <code>backup &lt;name&gt;.db</code> in the database folder. Re-using the same name overwrites the previous backup.</div>';
+  messageBox(body, 'Create backup', 'Backup', null, function() {
+    var input = document.getElementById('backup-name-input');
+    var name = input ? input.value : '';
+    $.get(routes.backup, name ? { name: name } : {}, function() {
       location.reload();
     });
   });
+  setTimeout(function() {
+    var input = document.getElementById('backup-name-input');
+    if (input) { input.focus(); input.select(); }
+  }, 200);
 }
 
 function delete_backup(db_name) {

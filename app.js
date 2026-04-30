@@ -160,7 +160,7 @@ app.post(routes.test_run, (req, res, next) => {
 });
 
 app.get(routes.backup, (req, res, next) => {
-  crontab.backup((err) => {
+  crontab.backup(req.query.name, (err) => {
     if (err) next(err);
     else res.end();
   });

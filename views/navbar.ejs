@@ -17,7 +17,7 @@
               <li><a class="dropdown-item" href="#">None</a></li>
             <% } else { %>
               <% backups.forEach(function(file){ %>
-                <li><a class="dropdown-item" href="<%= JSON.parse(routes).restore %>?db=<%= file %>"><%= file %></a></li>
+                <li><a class="dropdown-item" href="<%= JSON.parse(routes).restore %>?db=<%= file %>"><%= file.replace(/^backup /, '').replace(/\.db$/, '') %></a></li>
               <% }) %>
             <% } %>
           </ul>
