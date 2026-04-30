@@ -19,6 +19,16 @@
             <% } %>
           </ul>
         </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link" href="#" role="button" id="theme-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="Theme">
+            <i class="bi bi-circle-half" id="theme-icon" style="font-size:1.1rem;"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="theme-toggle">
+            <li><a class="dropdown-item" href="#" onclick="setTheme('light'); return false;"><i class="bi bi-sun-fill me-2"></i>Light</a></li>
+            <li><a class="dropdown-item" href="#" onclick="setTheme('dark'); return false;"><i class="bi bi-moon-fill me-2"></i>Dark</a></li>
+            <li><a class="dropdown-item" href="#" onclick="setTheme('system'); return false;"><i class="bi bi-circle-half me-2"></i>System</a></li>
+          </ul>
+        </li>
         <li class="nav-item"><a class="nav-link" href="https://github.com/alseambusher/crontab-ui" target="_blank" rel="noopener" aria-label="GitHub repository" title="View on GitHub"><i class="bi bi-github" style="font-size:1.25rem;"></i></a></li>
       </ul>
     </div>

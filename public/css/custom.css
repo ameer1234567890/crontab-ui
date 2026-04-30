@@ -1,7 +1,48 @@
+:root,
+[data-bs-theme="light"] {
+  --app-bg: #f5f6f8;
+  --app-card-bg: #ffffff;
+  --app-card-border: #e5e7eb;
+  --app-text: #1f2330;
+  --app-text-muted: #6b7280;
+  --app-table-hover: #f9fafb;
+  --app-table-stripe: #fafbfc;
+  --app-input-bg: #ffffff;
+  --app-divider: #e5e7eb;
+  --app-info-icon: #6b7280;
+}
+
+[data-bs-theme="dark"] {
+  --app-bg: #0f1115;
+  --app-card-bg: #161a22;
+  --app-card-border: #262b36;
+  --app-text: #e5e7eb;
+  --app-text-muted: #9aa3b2;
+  --app-table-hover: #1c212c;
+  --app-table-stripe: #181c25;
+  --app-input-bg: #1c212c;
+  --app-divider: #262b36;
+  --app-info-icon: #9aa3b2;
+}
+
 body {
-  background-color: #f5f6f8;
-  color: #1f2330;
-  font-size: 0.9rem;
+  background-color: var(--app-bg);
+  color: var(--app-text);
+  font-size: 0.85rem;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto,
+    "Helvetica Neue", "Noto Sans", Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code, pre, kbd, samp,
+.font-monospace {
+  font-family:
+    ui-monospace, SFMono-Regular, "JetBrains Mono", "SF Mono", Menlo, Monaco,
+    Consolas, "Liberation Mono", monospace;
 }
 
 .app-container {
@@ -40,7 +81,7 @@ body > .app-container {
   justify-content: space-between;
   margin-bottom: 0.75rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--app-divider);
 }
 
 .page-header h2 {
@@ -50,12 +91,16 @@ body > .app-container {
 }
 
 .app-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: var(--app-card-bg);
+  border: 1px solid var(--app-card-border);
   border-radius: 8px;
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
   padding: 0.875rem 1rem;
   margin-bottom: 0.75rem;
+}
+
+[data-bs-theme="dark"] .app-card {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .app-card > :last-child {
@@ -86,9 +131,9 @@ body > .app-container {
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #6b7280;
+  color: var(--app-text-muted);
   font-weight: 600;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--app-divider);
   vertical-align: middle;
   white-space: nowrap;
 }
@@ -97,7 +142,7 @@ body > .app-container {
 #main_table td.col-num {
   width: 3rem;
   text-align: center;
-  color: #6b7280;
+  color: var(--app-text-muted);
   font-variant-numeric: tabular-nums;
 }
 
@@ -111,7 +156,7 @@ body > .app-container {
 #main_table td.col-modified {
   width: 8rem;
   white-space: nowrap;
-  color: #6b7280;
+  color: var(--app-text-muted);
   font-size: 0.85rem;
 }
 
@@ -133,8 +178,8 @@ body > .app-container {
 
 #main_table td.nowrap-actions .toggle-btn {
   text-decoration: none;
-  background: #fff;
-  border: 1px solid #d1d5db;
+  background: var(--app-card-bg);
+  border: 1px solid var(--app-card-border);
   padding: 0.2rem 0.45rem;
   display: inline-flex;
   align-items: center;
@@ -152,11 +197,11 @@ body > .app-container {
 }
 
 #main_table td.nowrap-actions .toggle-btn.toggle-off .bi {
-  color: #9ca3af;
+  color: var(--app-text-muted);
 }
 
 #main_table td.nowrap-actions .toggle-btn:hover {
-  background: #f9fafb;
+  background: var(--app-table-hover);
 }
 
 .app-card .form-label {
@@ -183,13 +228,13 @@ div.dataTables_wrapper div.dataTables_filter label {
 }
 
 #main_table tbody tr:hover td {
-  background-color: #f9fafb;
+  background-color: var(--app-table-hover);
 }
 
 #main_table td:nth-child(3) {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.875rem;
-  color: #111827;
+  font-size: 0.85rem;
+  color: var(--app-text);
   word-break: break-word;
 }
 

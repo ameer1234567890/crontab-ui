@@ -1,5 +1,51 @@
 'use strict';
 
+/*********** Theme ****************/
+
+function applyTheme(mode) {
+  // mode: 'light' | 'dark' | 'system'
+  var resolved;
+  if (mode === 'light' || mode === 'dark') {
+    resolved = mode;
+  } else {
+    resolved = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-bs-theme', resolved);
+  var iconEl = document.getElementById('theme-icon');
+  if (iconEl) {
+    iconEl.className = 'bi ' + (
+      mode === 'light' ? 'bi-sun-fill' :
+      mode === 'dark' ? 'bi-moon-fill' :
+      'bi-circle-half'
+    );
+  }
+}
+
+function setTheme(mode) {
+  try {
+    if (mode === 'system') localStorage.removeItem('cui-theme');
+    else localStorage.setItem('cui-theme', mode);
+  } catch (_e) {}
+  applyTheme(mode);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var stored = null;
+  try { stored = localStorage.getItem('cui-theme'); } catch (_e) {}
+  applyTheme(stored || 'system');
+
+  if (window.matchMedia) {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    var listener = function() {
+      var s = null;
+      try { s = localStorage.getItem('cui-theme'); } catch (_e) {}
+      if (!s) applyTheme('system');
+    };
+    if (mq.addEventListener) mq.addEventListener('change', listener);
+    else if (mq.addListener) mq.addListener(listener);
+  }
+});
+
 /*********** MessageBox ****************/
 
 function getModal(id) {
