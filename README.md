@@ -8,6 +8,8 @@ Crontab UI
 [![npm](https://img.shields.io/docker/pulls/alseambusher/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/l/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 
+> **macOS users:** grab the native desktop app — [Download `Crontab-UI-0.4.3-arm64.dmg`](https://github.com/kanihal/crontab-ui/releases/latest) (Apple Silicon). No Node setup required; the server runs in the background and tears down on quit. [Install instructions ↓](#update--2026-04-29-macos-desktop-app)
+
 ## Update — 2026-04-30: dark-mode polish, navbar Backup, instant toggle
 
 The UI now reads cleanly in dark mode end-to-end and a few rough edges are gone:
@@ -33,7 +35,7 @@ A native macOS `.app` is now available so you don't have to keep `node app.js` r
 
 ![Crontab UI desktop app](screenshots/desktop-app.png)
 
-**Install (Apple Silicon):** download `Crontab-UI-0.4.2-arm64.dmg` from the [Releases page](https://github.com/kanihal/crontab-ui/releases), open the DMG, drag **Crontab UI** to `/Applications`. On first launch macOS may complain because the build is unsigned; clear quarantine once with:
+**Install (Apple Silicon):** download `Crontab-UI-0.4.3-arm64.dmg` from the [Releases page](https://github.com/kanihal/crontab-ui/releases), open the DMG, drag **Crontab UI** to `/Applications`. On first launch macOS may complain because the build is unsigned; clear quarantine once with:
 
 ```sh
 xattr -dr com.apple.quarantine "/Applications/Crontab UI.app"
